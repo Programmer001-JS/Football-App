@@ -1,32 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from 'react';
 
-const Test = () => {
-  const [matches, setMatches] = useState({Danilo: 0});
-  const [scores, setScores] = useState({});
+const Match = ({ teams }) => {
+  const [score, setScore] = useState({ [teams[0]]: 0, [teams[1]]: 0 });
   const [isStarted, setIsStarted] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
+  const matchDuration = 10;
 
-  useEffect(() => {
-    if (isStarted) {
-      setTimeout(() => {
-        setScores({ ...scores, Danilo: matches.Danilo + 1 });
-        setMatches({ ...matches, Danilo: "" });
-      }, 5000);
-    }
-  }, [isStarted, matches]);
-
-  const handleStart = () => {
+  const startMatch = () => {
     setIsStarted(true);
+    const interval = setInterval(() => {
+      const goals = Math.floor(Math.random() * 2);
+      if (goals === 1) {
+        const team = Math.floor(Math.random() * 2) === 0 ? teams[0] : teams[1];
+        setScore(prevState => ({ ...prevState, [team]: prevState[team] + 1 }));
+      }
+    }, 1000);
+    setTimeout(() => {
+      setIsFinished(true);
+      clearInterval(interval);
+    }, matchDuration * 1000);
   };
-
+  const borderStyle = isFinished ? { border: '2px solid red' } : {};
+  
   return (
-    <div>
-      <h1>Matches</h1>
-      <p>Danilo: {matches.Danilo}</p>
-      <h1>Scores</h1>
-      <p>Danilo: {scores.Danilo}</p>
-      {!isStarted && <button onClick={handleStart}>Start</button>}
+    <div style={borderStyle}>
+      <h2>{teams[0]} vs {teams[1]}</h2>
+      <p>{score[teams[0]]} - {score[teams[1]]}</p>
+      {!isStarted && <button onClick={startMatch}>Start Match</button>}
+      {isFinished && <p>Match finished</p>}
     </div>
   );
 };
 
-export default Test;
+export default Match
+
