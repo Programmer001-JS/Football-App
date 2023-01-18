@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 
-const Match = ({ teams }) => {
+const Match = ({ teams, onFinish }) => {
   const [score, setScore] = useState({ [teams[0]]: 0, [teams[1]]: 0 });
   const [isStarted, setIsStarted] = useState(false);
-  const [isFinished, setIsFinished] = useState(false);
   const matchDuration = 10;
 
   const startMatch = () => {
@@ -16,21 +15,18 @@ const Match = ({ teams }) => {
       }
     }, 1000);
     setTimeout(() => {
-      setIsFinished(true);
+      onFinish(score);
       clearInterval(interval);
     }, matchDuration * 1000);
   };
-  const borderStyle = isFinished ? { border: '2px solid red' } : {};
   
   return (
-    <div style={borderStyle}>
+    <div>
       <h2>{teams[0]} vs {teams[1]}</h2>
       <p>{score[teams[0]]} - {score[teams[1]]}</p>
       {!isStarted && <button onClick={startMatch}>Start Match</button>}
-      {isFinished && <p>Match finished</p>}
     </div>
   );
 };
 
-export default Match
-
+export default Match;
